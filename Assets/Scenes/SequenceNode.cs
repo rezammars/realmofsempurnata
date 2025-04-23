@@ -12,19 +12,22 @@ public class SequenceNode : BTNode
 
     public override NodeState Evaluate()
     {
-        foreach (BTNode child in children)
+        bool anyRunning = false; // <- INI yang harus ditambahkan di sini
+
+        foreach (BTNode node in children)
         {
-            NodeState state = child.Evaluate();
-            if (state == NodeState.Failure)
+            switch (node.Evaluate())
             {
-                return NodeState.Failure;
-            }
-            if (state == NodeState.Running)
-            {
-                return NodeState.Running;
+                case NodeState.Failure:
+                    state = NodeState.Failure;
+                    return state;
+                case NodeState.Running:
+                    anyRunning = true;
+                    break;
             }
         }
 
-        return NodeState.Success;
+        state = anyRunning ? NodeState.Running : NodeState.Success;
+        return state;
     }
 }

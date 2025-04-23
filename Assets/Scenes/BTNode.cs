@@ -9,5 +9,8 @@ public enum NodeState
 
 public abstract class BTNode
 {
+    protected NodeState state;
+    public NodeState State => state;
+
     public abstract NodeState Evaluate();
 }

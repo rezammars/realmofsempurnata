@@ -1,3 +1,4 @@
+using UnityEngine;
 using System.Collections.Generic;
 
 public class SelectorNode : BTNode
@@ -11,19 +12,20 @@ public class SelectorNode : BTNode
 
     public override NodeState Evaluate()
     {
-        foreach (BTNode child in children)
+        foreach (BTNode node in children)
         {
-            NodeState state = child.Evaluate();
-            if (state == NodeState.Success)
+            switch (node.Evaluate())
             {
-                return NodeState.Success;
-            }
-            if (state == NodeState.Running)
-            {
-                return NodeState.Running;
+                case NodeState.Success:
+                    state = NodeState.Success;
+                    return state;
+                case NodeState.Running:
+                    state = NodeState.Running;
+                    return state;
             }
         }
 
-        return NodeState.Failure;
+        state = NodeState.Failure;
+        return state;
     }
 }

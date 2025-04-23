@@ -83,6 +83,12 @@ public class EnemyAI : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         Debug.Log("Enemy menyerang!");
 
+        Movement playerMovement = player.GetComponent<Movement>();
+        if (playerMovement != null)
+        {
+            playerMovement.ApplySlow(2f, 3f);
+            Debug.Log("Player terkena debuff slow dari serangan enemy.");
+        }
         return NodeState.Success;
     }
 
