@@ -436,8 +436,8 @@ GameObject:
   - component: {fileID: 576319428}
   - component: {fileID: 576319429}
   m_Layer: 0
-  m_Name: Char
-  m_TagString: Untagged
+  m_Name: Player
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -589,7 +589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 957cee8f742601d4e95a590a1ab11b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 3
   jumpForce: 10
   groundCheck: {fileID: 1420410446}
   groundCheckRadius: 0.15
@@ -727,14 +727,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 576319427}
   detectionRange: 4
-  attackRange: 1.5
-  moveSpeed: 1.4
+  attackRange: 1
+  moveSpeed: 1.5
+  patrolDistance: 3
+  jumpForce: 10
   groundCheck: {fileID: 56042764}
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  jumpForce: 10
 --- !u!50 &876362856
 Rigidbody2D:
   serializedVersion: 5
@@ -743,7 +744,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 876362854}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
