@@ -10,6 +10,11 @@ public class Movement : MonoBehaviour
     public float groundCheckRadius = 0.15f;
     public LayerMask groundLayer;
     public Light2D playerLight;
+    public float attackRange = 1f;
+    public int attackDamage = 1;
+    public LayerMask enemyLayer;
+    public Transform attackPoint;
+
 
     private float originalMoveSpeed;
     private Rigidbody2D rb;
@@ -41,7 +46,35 @@ public class Movement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
 
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Attack();
+        }
+
         LimitCharacterMovement();
+    }
+
+    void Attack()
+    {
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(attackDamage);
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
     void LimitCharacterMovement()
