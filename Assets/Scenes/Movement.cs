@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class Movement : MonoBehaviour
     public int attackDamage = 1;
     public LayerMask enemyLayer;
     public Transform attackPoint;
-
+    public int maxHP = 100;
 
     private float originalMoveSpeed;
     private Rigidbody2D rb;
@@ -23,12 +24,15 @@ public class Movement : MonoBehaviour
     private float originalLightRadius;
     private Coroutine lightBoostCoroutine;
     private Coroutine slowCoroutine;
+    private int currentHP;
+
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         maincamera = Camera.main;
         originalMoveSpeed = moveSpeed;
+        currentHP = maxHP;
 
         if (playerLight != null)
             originalLightRadius = playerLight.pointLightOuterRadius;
@@ -75,6 +79,23 @@ public class Movement : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHP -= amount;
+        Debug.Log("HP Player: " + currentHP);
+
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("Player mati!");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     void LimitCharacterMovement()

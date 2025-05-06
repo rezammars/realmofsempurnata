@@ -5,7 +5,8 @@ public class EnemyAI : MonoBehaviour
     public Transform player;
     public float detectionRange = 5f;
     public float attackRange = 1.5f;
-
+    public float attackCooldown = 5f;
+    public int damageToPlayer = 1;
     public float moveSpeed = 2f;
     public float patrolDistance = 3f;
     public float jumpForce = 5f;
@@ -20,6 +21,7 @@ public class EnemyAI : MonoBehaviour
     private bool hasJumped = false;
     private Vector2 patrolStartPoint;
     private bool movingRight = true;
+    private float lastAttackTime = -Mathf.Infinity;
     private BTNode root;
 
     void Start()
@@ -80,15 +82,23 @@ public class EnemyAI : MonoBehaviour
 
     NodeState AttackPlayer()
     {
+        if (Time.time - lastAttackTime < attackCooldown)
+        {
+            return NodeState.Failure;
+        }
+        
         rb.linearVelocity = Vector2.zero;
         Debug.Log("Enemy menyerang!");
 
         Movement playerMovement = player.GetComponent<Movement>();
         if (playerMovement != null)
         {
+            playerMovement.TakeDamage(damageToPlayer);
+
             playerMovement.ApplySlow(2f, 3f);
             Debug.Log("Player terkena debuff slow dari serangan enemy.");
         }
+        lastAttackTime = Time.time;
         return NodeState.Success;
     }
 
