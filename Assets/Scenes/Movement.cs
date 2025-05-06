@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class Movement : MonoBehaviour
 {
@@ -8,12 +9,14 @@ public class Movement : MonoBehaviour
     public Transform groundCheck;
     public float groundCheckRadius = 0.15f;
     public LayerMask groundLayer;
+    public Light2D playerLight;
 
     private float originalMoveSpeed;
     private Rigidbody2D rb;
     private bool isGrounded;
     private Camera maincamera;
-
+    private float originalLightRadius;
+    private Coroutine lightBoostCoroutine;
     private Coroutine slowCoroutine;
 
     void Start()
@@ -21,6 +24,9 @@ public class Movement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         maincamera = Camera.main;
         originalMoveSpeed = moveSpeed;
+
+        if (playerLight != null)
+            originalLightRadius = playerLight.pointLightOuterRadius;
     }
 
     void Update()
@@ -60,5 +66,20 @@ public class Movement : MonoBehaviour
         moveSpeed = slowSpeed;
         yield return new WaitForSeconds(duration);
         moveSpeed = originalMoveSpeed;
+    }
+
+    public void BoostLight()
+    {
+        if (lightBoostCoroutine != null)
+            StopCoroutine(lightBoostCoroutine);
+
+        lightBoostCoroutine = StartCoroutine(BoostLightRoutine());
+    }
+
+    IEnumerator BoostLightRoutine()
+    {
+       playerLight.pointLightOuterRadius = originalLightRadius + 4f;
+        yield return new WaitForSeconds(5f);
+        playerLight.pointLightOuterRadius = originalLightRadius;
     }
 }
