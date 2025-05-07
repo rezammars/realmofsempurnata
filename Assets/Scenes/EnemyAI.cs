@@ -130,11 +130,16 @@ public class EnemyAI : MonoBehaviour
 
         if (hit.collider != null && !hasJumped)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            hasJumped = true;
-            return NodeState.Success;
+        
+            if (hit.collider.CompareTag("Platform"))
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                hasJumped = true;
+                return NodeState.Success;
+            }
         }
 
+    
         if (isGrounded && Mathf.Abs(rb.linearVelocity.y) < 0.01f)
         {
             hasJumped = false;
@@ -142,4 +147,5 @@ public class EnemyAI : MonoBehaviour
 
         return NodeState.Failure;
     }
+
 }
