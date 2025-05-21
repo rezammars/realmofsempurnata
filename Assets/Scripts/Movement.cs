@@ -17,7 +17,7 @@ public class Movement : MonoBehaviour
     public Transform attackPoint;
     public int maxHP = 100;
     public PlayerUI playerUI;
-
+    public float fallThresholdY = -7f;
 
     private float originalMoveSpeed;
     private float originalJumpForce;
@@ -65,6 +65,11 @@ public class Movement : MonoBehaviour
             Attack();
         }
 
+        if (transform.position.y < fallThresholdY)
+        {
+            Debug.Log("Player jatuh ke jurang!");
+            Die();
+        }
         LimitCharacterMovement();
     }
 

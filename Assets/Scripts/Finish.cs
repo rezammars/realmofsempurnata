@@ -3,12 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class Finish : MonoBehaviour
 {
+    public string nextSceneName;
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Level selesai!");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SceneManager.LoadScene(nextSceneName);
         }
     }
 }
