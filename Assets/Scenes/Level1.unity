@@ -128,7 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 56042764}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Groundcek (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -744,7 +744,7 @@ GameObject:
   - component: {fileID: 576319428}
   - component: {fileID: 576319429}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Rey
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -878,13 +878,14 @@ Transform:
   m_GameObject: {fileID: 576319422}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.5, y: -1.5, z: 0}
+  m_LocalPosition: {x: -8, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1420410446}
   - {fileID: 1582022872}
   - {fileID: 991612531}
+  - {fileID: 1383043982}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &576319428
@@ -906,16 +907,13 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  playerLight: {fileID: 1582022871}
   attackRange: 1
-  attackDamage: 2
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 128
+  attackDamage: 5
   attackPoint: {fileID: 991612531}
   maxHP: 100
   playerUI: {fileID: 2084025831}
   fallThresholdY: -10
+  playerLight: {fileID: 1582022871}
 --- !u!114 &576319429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1163,40 +1161,14 @@ GameObject:
   - component: {fileID: 876362858}
   - component: {fileID: 876362857}
   - component: {fileID: 876362856}
-  - component: {fileID: 876362855}
   - component: {fileID: 876362860}
-  m_Layer: 7
-  m_Name: Enemy
-  m_TagString: Untagged
+  m_Layer: 0
+  m_Name: BurgerMan
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &876362855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 876362854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40fcf2c12fa770d499427ea456ffdae5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 576319427}
-  detectionRange: 4
-  attackRange: 1
-  attackCooldown: 5
-  damageToPlayer: 5
-  moveSpeed: 1.5
-  patrolDistance: 3
-  jumpForce: 13
-  groundCheck: {fileID: 56042764}
-  groundCheckRadius: 0.1
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!50 &876362856
 Rigidbody2D:
   serializedVersion: 5
@@ -1355,10 +1327,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 876362854}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b5c200793c2fb443b726662a1eea6a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 40fcf2c12fa770d499427ea456ffdae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  player: {fileID: 576319427}
+  detectionRange: 2
+  attackRange: 1
+  attackCooldown: 3
+  damageToPlayer: 1
+  moveSpeed: 2
+  patrolDistance: 3
+  jumpForce: 5
+  groundCheck: {fileID: 56042764}
+  groundCheckRadius: 0.1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  maxHP: 1
 --- !u!1 &906115591
 GameObject:
   m_ObjectHideFlags: 0
@@ -1755,6 +1740,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1383043981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1383043982}
+  - component: {fileID: 1383043983}
+  m_Layer: 0
+  m_Name: Injak
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1383043982
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383043981}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 576319427}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &1383043983
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383043981}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
 --- !u!1 &1420410445
 GameObject:
   m_ObjectHideFlags: 0

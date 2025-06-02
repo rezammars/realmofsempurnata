@@ -1,19 +1,30 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class BurgermanAI : MonoBehaviour
 {
+    [Header("Player & Deteksi")]
     public Transform player;
     public float detectionRange = 5f;
     public float attackRange = 1.5f;
     public float attackCooldown = 5f;
     public int damageToPlayer = 1;
+
+    [Header("Patrol & Movement")]
     public float moveSpeed = 2f;
     public float patrolDistance = 3f;
     public float jumpForce = 5f;
 
+    [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
     public LayerMask groundLayer;
+
+    [Header("Health")]
+    public int maxHP = 1;
+
+    private int currentHP;
+    private bool isDead = false;
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
@@ -29,14 +40,15 @@ public class EnemyAI : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         patrolStartPoint = transform.position;
+        currentHP = maxHP;
 
         var chaseNode = new ActionNode(ChasePlayer);
         var attackNode = new ActionNode(AttackPlayer);
         var patrolNode = new ActionNode(Patrol);
 
-        var chaseAndAttack = new SequenceNode(new System.Collections.Generic.List<BTNode> {
+        var chaseAndAttack = new SequenceNode(new List<BTNode> {
             new ActionNode(CanSeePlayer),
-            new SelectorNode(new System.Collections.Generic.List<BTNode> {
+            new SelectorNode(new List<BTNode> {
                 new ActionNode(CheckObstacle),
                 chaseNode
             }),
@@ -44,7 +56,7 @@ public class EnemyAI : MonoBehaviour
             attackNode
         });
 
-        root = new SelectorNode(new System.Collections.Generic.List<BTNode> {
+        root = new SelectorNode(new List<BTNode> {
             chaseAndAttack,
             patrolNode
         });
@@ -52,11 +64,13 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if (isDead) return;
+
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         root.Evaluate();
     }
 
-    // --- Behavior Tree Node Methods ---
+    // --- Behavior Tree Methods ---
 
     NodeState CanSeePlayer()
     {
@@ -74,30 +88,25 @@ public class EnemyAI : MonoBehaviour
     {
         Vector2 targetPos = new Vector2(player.position.x, transform.position.y);
         transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-
         sr.flipX = player.position.x < transform.position.x;
-
         return NodeState.Running;
     }
 
     NodeState AttackPlayer()
     {
         if (Time.time - lastAttackTime < attackCooldown)
-        {
             return NodeState.Failure;
-        }
-        
+
         rb.linearVelocity = Vector2.zero;
-        Debug.Log("Enemy menyerang!");
+        Debug.Log("Burgerman menyerang!");
 
         Movement playerMovement = player.GetComponent<Movement>();
         if (playerMovement != null)
         {
             playerMovement.TakeDamage(damageToPlayer);
-
-            playerMovement.ApplySlow(2f, 3f);
-            Debug.Log("Player terkena debuff slow dari serangan enemy.");
+            playerMovement.ApplySlow(2f, 3f); // Debuff slow
         }
+
         lastAttackTime = Time.time;
         return NodeState.Success;
     }
@@ -106,7 +115,6 @@ public class EnemyAI : MonoBehaviour
     {
         float direction = movingRight ? 1 : -1;
         rb.linearVelocity = new Vector2(direction * moveSpeed, rb.linearVelocity.y);
-
         sr.flipX = direction < 0;
 
         if (movingRight && transform.position.x >= patrolStartPoint.x + patrolDistance)
@@ -128,18 +136,13 @@ public class EnemyAI : MonoBehaviour
         RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, direction, 0.6f, groundLayer);
         Debug.DrawRay(origin, direction * 0.6f, Color.red);
 
-        if (hit.collider != null && !hasJumped)
+        if (hit.collider != null && !hasJumped && hit.collider.CompareTag("Platform"))
         {
-        
-            if (hit.collider.CompareTag("Platform"))
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                hasJumped = true;
-                return NodeState.Success;
-            }
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            hasJumped = true;
+            return NodeState.Success;
         }
 
-    
         if (isGrounded && Mathf.Abs(rb.linearVelocity.y) < 0.01f)
         {
             hasJumped = false;
@@ -148,4 +151,28 @@ public class EnemyAI : MonoBehaviour
         return NodeState.Failure;
     }
 
+    // --- Kematian saat diinjak ---
+
+    public void TakeDamage(int amount)
+    {
+        if (isDead) return;
+
+        currentHP -= amount;
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        isDead = true;
+        Debug.Log("Burgerman mati!");
+
+        rb.linearVelocity = Vector2.zero;
+        GetComponent<Collider2D>().enabled = false;
+        rb.simulated = false;
+
+        Destroy(gameObject, 0.5f);
+    }
 }

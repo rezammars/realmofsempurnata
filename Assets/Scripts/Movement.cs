@@ -5,32 +5,44 @@ using UnityEngine.SceneManagement;
 
 public class Movement : MonoBehaviour
 {
+    [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpForce = 4f;
+    private float originalMoveSpeed;
+    private float originalJumpForce;
+
+    [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.15f;
     public LayerMask groundLayer;
-    public Light2D playerLight;
+
+    [Header("Attack")]
     public float attackRange = 1f;
     public int attackDamage = 1;
-    public LayerMask enemyLayer;
     public Transform attackPoint;
+
+    [Header("Player Stats")]
     public int maxHP = 100;
     public PlayerUI playerUI;
     public float fallThresholdY = -7f;
 
-    private float originalMoveSpeed;
-    private float originalJumpForce;
+    [Header("Light Effect")]
+    public Light2D playerLight;
+    private float originalLightRadius;
+
     private Rigidbody2D rb;
     private bool isGrounded;
     private Camera maincamera;
-    private float originalLightRadius;
-    private Coroutine lightBoostCoroutine;
-    private Coroutine slowCoroutine;
-    private Coroutine powerJumpCoroutine;
-    private Coroutine invincibilityCoroutine;
+
     private int currentHP;
     private bool isInvincible = false;
+
+    // Coroutines
+    private Coroutine lightBoostCoroutine;
+    private Coroutine slowCoroutine;
+    private Coroutine jumpDebuffCoroutine;
+    private Coroutine powerJumpCoroutine;
+    private Coroutine invincibilityCoroutine;
 
     void Start()
     {
@@ -44,8 +56,7 @@ public class Movement : MonoBehaviour
             originalLightRadius = playerLight.pointLightOuterRadius;
 
         if (playerUI != null)
-        playerUI.UpdateHP(currentHP, maxHP);
-
+            playerUI.UpdateHP(currentHP, maxHP);
     }
 
     void Update()
@@ -60,40 +71,33 @@ public class Movement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            Attack();
-        }
-
         if (transform.position.y < fallThresholdY)
         {
             Debug.Log("Player jatuh ke jurang!");
             Die();
         }
+
         LimitCharacterMovement();
     }
 
-    void Attack()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
-
-        foreach (Collider2D enemy in hitEnemies)
+        if (other.CompareTag("Enemy"))
         {
-            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
+            if (transform.position.y > other.transform.position.y + 0.3f)
             {
-                enemyHealth.TakeDamage(attackDamage);
+                if (other.TryGetComponent<BurgermanAI>(out var burger))
+                {
+                    burger.TakeDamage(1); // Atau langsung burger.Die();
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f); // Bounce effect
+                }
+                // else if (other.TryGetComponent<ColaCannonAI>(out var cola))
+                {
+                    // cola.TakeDamage(1); // Atau langsung cola.Die();
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f);
+                }
             }
         }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (attackPoint == null)
-            return;
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
     public void TakeDamage(int amount)
@@ -108,8 +112,8 @@ public class Movement : MonoBehaviour
         Debug.Log("HP Player: " + currentHP);
 
         if (playerUI != null)
-        playerUI.UpdateHP(currentHP, maxHP);
-        
+            playerUI.UpdateHP(currentHP, maxHP);
+
         if (currentHP <= 0)
         {
             Die();
@@ -130,12 +134,13 @@ public class Movement : MonoBehaviour
         transform.position = new Vector3(clampedX, transform.position.y, transform.position.z);
     }
 
+    // === Cola Cannon Effect ===
     public void ApplySlow(float slowSpeed, float duration)
     {
         if (slowCoroutine != null)
             StopCoroutine(slowCoroutine);
-        
-        Debug.Log($"Player terkena efek slow: kecepatan {slowSpeed} selama {duration} detik");
+
+        Debug.Log($"Player terkena slow: kecepatan jadi {slowSpeed} selama {duration} detik");
         slowCoroutine = StartCoroutine(SlowCoroutine(slowSpeed, duration));
     }
 
@@ -146,6 +151,24 @@ public class Movement : MonoBehaviour
         moveSpeed = originalMoveSpeed;
     }
 
+    // === Burgerman Effect ===
+    public void ApplyJumpDebuff(float duration)
+    {
+        if (jumpDebuffCoroutine != null)
+            StopCoroutine(jumpDebuffCoroutine);
+
+        Debug.Log($"Player terkena jump debuff selama {duration} detik");
+        jumpDebuffCoroutine = StartCoroutine(JumpDebuffRoutine(duration));
+    }
+
+    IEnumerator JumpDebuffRoutine(float duration)
+    {
+        jumpForce = originalJumpForce / 2f;
+        yield return new WaitForSeconds(duration);
+        jumpForce = originalJumpForce;
+    }
+
+    // === Light Boost Power Up ===
     public void BoostLight()
     {
         if (lightBoostCoroutine != null)
@@ -161,6 +184,7 @@ public class Movement : MonoBehaviour
         playerLight.pointLightOuterRadius = originalLightRadius;
     }
 
+    // === Power Jump Power Up ===
     public void ActivatePowerJump()
     {
         if (powerJumpCoroutine != null)
@@ -178,6 +202,7 @@ public class Movement : MonoBehaviour
         Debug.Log("Power Jump berakhir.");
     }
 
+    // === Invincibility Power Up ===
     public void ActivateInvincibility(float duration)
     {
         if (invincibilityCoroutine != null)
