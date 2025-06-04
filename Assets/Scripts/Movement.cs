@@ -37,7 +37,6 @@ public class Movement : MonoBehaviour
     private int currentHP;
     private bool isInvincible = false;
 
-    // Coroutines
     private Coroutine lightBoostCoroutine;
     private Coroutine slowCoroutine;
     private Coroutine jumpDebuffCoroutine;
@@ -88,12 +87,10 @@ public class Movement : MonoBehaviour
             {
                 if (other.TryGetComponent<BurgermanAI>(out var burger))
                 {
-                    burger.TakeDamage(1); // Atau langsung burger.Die();
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f); // Bounce effect
+                    burger.TakeDamage(1);
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f);
                 }
-                // else if (other.TryGetComponent<ColaCannonAI>(out var cola))
                 {
-                    // cola.TakeDamage(1); // Atau langsung cola.Die();
                     rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f);
                 }
             }
@@ -152,18 +149,18 @@ public class Movement : MonoBehaviour
     }
 
     // === Burgerman Effect ===
-    public void ApplyJumpDebuff(float duration)
+    public void ApplyJumpDebuff(float multiplier, float duration)
     {
         if (jumpDebuffCoroutine != null)
             StopCoroutine(jumpDebuffCoroutine);
 
         Debug.Log($"Player terkena jump debuff selama {duration} detik");
-        jumpDebuffCoroutine = StartCoroutine(JumpDebuffRoutine(duration));
+        jumpDebuffCoroutine = StartCoroutine(JumpDebuffRoutine(multiplier, duration));
     }
 
-    IEnumerator JumpDebuffRoutine(float duration)
+    IEnumerator JumpDebuffRoutine(float multiplier, float duration)
     {
-        jumpForce = originalJumpForce / 2f;
+        jumpForce = originalJumpForce * multiplier;
         yield return new WaitForSeconds(duration);
         jumpForce = originalJumpForce;
     }
