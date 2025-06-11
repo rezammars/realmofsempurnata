@@ -15,6 +15,7 @@ public class KingSugarAI : MonoBehaviour
     public float aoeCooldown = 4f;
     public int aoeDamage = 2;
     public LayerMask playerLayer;
+    public GameObject aoePrefab;
 
     [Header("Projectile Settings")]
     public GameObject projectilePrefab;
@@ -124,10 +125,16 @@ public class KingSugarAI : MonoBehaviour
     {
         Debug.Log("AOE Attack!");
 
+        Instantiate(aoePrefab, aoeCenter.position, Quaternion.identity);
+        
         Collider2D[] hits = Physics2D.OverlapCircleAll(aoeCenter.position, aoeRadius, playerLayer);
         foreach (var hit in hits)
         {
             Debug.Log("Player terkena AOE");
+            if (hit.CompareTag("Player"))
+            {
+                hit.GetComponent<Movement>()?.TakeDamage(aoeDamage);
+            }
         }
     }
 

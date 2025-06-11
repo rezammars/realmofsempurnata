@@ -35,6 +35,7 @@ public class Movement : MonoBehaviour
     private int currentHP;
     private bool isInvincible = false;
     public bool canPush = false;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Coroutine lightBoostCoroutine;
     private Coroutine slowCoroutine;
@@ -55,12 +56,20 @@ public class Movement : MonoBehaviour
 
         if (playerUI != null)
             playerUI.UpdateHP(currentHP, maxHP);
+        
+        if (spriteRenderer == null)
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+
+        if (moveInput != 0)
+        {
+            spriteRenderer.flipX = moveInput < 0;
+        }
 
         if (Input.GetButtonDown("Jump") && Time.time >= lastJumpTime + jumpCooldown)
         {
@@ -229,34 +238,8 @@ public class Movement : MonoBehaviour
     }
 
     // === Push Power Up ===
-    public void ActivatePushAbility(float duration)
+    public void ActivatePushAbility()
     {
         canPush = true;
-    
-        GameObject[] pushables = GameObject.FindGameObjectsWithTag("Pushable");
-        foreach (var obj in pushables)
-        {
-            if (obj.TryGetComponent<Pusher>(out var pusher))
-            {
-                pusher.EnablePush();
-            }
-        }
-
-        StartCoroutine(DisablePushAfter(duration));
-    }
-
-    IEnumerator DisablePushAfter(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        canPush = false;
-
-        GameObject[] pushables = GameObject.FindGameObjectsWithTag("Pushable");
-        foreach (var obj in pushables)
-        {
-            if (obj.TryGetComponent<Pusher>(out var pusher))
-            {
-                pusher.DisablePush();
-            }
-        }
     }
 }

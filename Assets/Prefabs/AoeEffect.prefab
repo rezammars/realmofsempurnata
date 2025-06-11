@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8245549727298881201}
   - component: {fileID: 7105070445182132569}
   - component: {fileID: 2058887788758456945}
+  - component: {fileID: -840375073176514413}
   m_Layer: 0
   m_Name: AoeEffect
   m_TagString: Untagged
@@ -224,7 +225,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0.81377935, g: 1, b: 0, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4870,3 +4871,23 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 4.5229464
+--- !u!114 &-840375073176514413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4130495667281671680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42112c928ab19c2438ba51dd9ba27097, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 1
+  damageDelay: 0.1
+  damage: 2
+  slowDuration: 2
+  slowAmount: 2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 512

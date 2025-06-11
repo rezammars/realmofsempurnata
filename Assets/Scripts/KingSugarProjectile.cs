@@ -3,13 +3,23 @@ using UnityEngine;
 public class KingSugarProjectile : MonoBehaviour
 {
     public int damage = 1;
-    void Start() => Destroy(gameObject, 5f);
+    public float lifetime = 5f;
+
+    void Start()
+    {
+        Destroy(gameObject, lifetime);
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player kena peluru!");
-            // other.GetComponent<PlayerHealth>()?.TakeDamage(damage);
+            Debug.Log("Player terkena peluru!");
+            other.GetComponent<Movement>()?.TakeDamage(damage);
+            Destroy(gameObject);
+        }
+        else if (!other.CompareTag("Enemy"))
+        {
             Destroy(gameObject);
         }
     }

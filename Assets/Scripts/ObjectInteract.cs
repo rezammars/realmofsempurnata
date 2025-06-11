@@ -26,7 +26,7 @@ public class ObjectInteract : MonoBehaviour
                         movement.ActivateInvincibility(5f);
                         break;
                     case "susu":
-                        movement.ActivatePushAbility(5f);
+                        movement.ActivatePushAbility();
                         break;
                 }
             }
