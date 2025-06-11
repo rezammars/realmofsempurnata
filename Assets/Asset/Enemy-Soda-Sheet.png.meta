@@ -122,20 +122,20 @@ TextureImporter:
       name: Enemy-Soda-Sheet_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 7
-        width: 118
-        height: 115
+        x: 6
+        y: 8
+        width: 116
+        height: 113
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 12b8ed062b382e9e0800000000000000
-      internalID: -1593566515983119583
+      spriteID: e12b0eac284823541ad458538fcb2fe9
+      internalID: 671876841
       vertices: []
       indices: 
       edges: []
@@ -144,20 +144,20 @@ TextureImporter:
       name: Enemy-Soda-Sheet_1
       rect:
         serializedVersion: 2
-        x: 135
-        y: 7
-        width: 115
-        height: 117
+        x: 136
+        y: 8
+        width: 113
+        height: 115
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 64b058e9342d823c0800000000000000
-      internalID: -4384023049381016762
+      spriteID: 17f03011d70706e49ab5a2d6e265bc4b
+      internalID: 1671987579
       vertices: []
       indices: 
       edges: []
@@ -166,20 +166,20 @@ TextureImporter:
       name: Enemy-Soda-Sheet_2
       rect:
         serializedVersion: 2
-        x: 261
-        y: 7
-        width: 117
-        height: 118
+        x: 262
+        y: 8
+        width: 115
+        height: 116
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c42858c9a98f76ca0800000000000000
-      internalID: -6023572633650101684
+      spriteID: 2304a32b9e39da2409c7bfb11830d4cc
+      internalID: 48802090
       vertices: []
       indices: 
       edges: []
@@ -188,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1dcb7c6f332711a4ca34db13ef416aa7
     internalID: 0
     vertices: []
     indices: 
@@ -197,7 +197,11 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Enemy-Soda-Sheet_0: 671876841
+      Enemy-Soda-Sheet_1: 1671987579
+      Enemy-Soda-Sheet_2: 48802090
+      Enemy-Soda-Sheet_3: 411188430
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

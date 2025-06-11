@@ -1,185 +1,191 @@
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class KingSugarAI : MonoBehaviour
 {
-    [Header("Player & Detection")]
+    [Header("Target & Range")]
     public Transform player;
-    public float detectionRange = 10f;
     public float aoeRange = 2f;
-    public float projectileCooldown = 5f;
-    public float aoeCooldown = 5f;
-    public int damageAOE = 2;
-    public int damageProjectile = 1;
+    public float chaseRange = 5f;
+
+    [Header("AOE Settings")]
+    public Transform aoeCenter;
+    public float aoeRadius = 1.8f;
+    public float aoeCooldown = 4f;
+    public int aoeDamage = 2;
+    public LayerMask playerLayer;
+
+    [Header("Projectile Settings")]
     public GameObject projectilePrefab;
     public Transform firePoint;
+    public float projectileCooldown = 3f;
 
     [Header("Movement")]
-    public float moveSpeed = 1.5f;
+    public float moveSpeed = 2f;
 
-    [Header("Health")]
-    public int maxHP = 20;
-
+    [Header("Health Settings")]
+    public int maxHP = 10;
     private int currentHP;
-    private bool isDead = false;
+
+    private float lastAOETime = -999f;
+    private float lastProjectileTime = -999f;
+
+    public bool playerInAirZone = false;
     private Rigidbody2D rb;
-    private SpriteRenderer sr;
-
-    private float lastAOETime = -Mathf.Infinity;
-    private float lastShootTime = -Mathf.Infinity;
-
-    private BTNode root;
+    private BTNode treeRoot;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
         currentHP = maxHP;
-
-        var attackSelector = new SelectorNode(new List<BTNode>
-        {
-            new SequenceNode(new List<BTNode> {
-                new ActionNode(PlayerIsNearOnGround),
-                new ActionNode(AOEStrike)
-            }),
-            new SequenceNode(new List<BTNode> {
-                new ActionNode(PlayerIsFarOnPlatform),
-                new ActionNode(ShootProjectile)
-            })
-        });
-
-        var moveToPlayer = new ActionNode(MoveTowardPlayer);
-        var mainBehavior = new SelectorNode(new List<BTNode>
-        {
-            new ActionNode(CanSeePlayer),
-            attackSelector,
-            moveToPlayer
-        });
-
-        root = mainBehavior;
+        rb = GetComponent<Rigidbody2D>();
+        BuildTree();
     }
 
     void Update()
     {
-        if (isDead) return;
-        root.Evaluate();
+        if (currentHP > 0)
+            treeRoot?.Evaluate();
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void BuildTree()
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        var playerInAOERange = new ActionNode(() =>
         {
-        
-            Vector2 contactPoint = collision.GetContact(0).point;
-            Vector2 playerBottom = new Vector2(transform.position.x, transform.position.y - 0.5f);
+            float distance = Vector2.Distance(transform.position, player.position);
+            return (!playerInAirZone && distance <= aoeRange) ? NodeState.Success : NodeState.Failure;
+        });
 
-            if (playerBottom.y > contactPoint.y)
+        var doAOE = new ActionNode(() =>
+        {
+            if (!IsAOEOnCooldown())
             {
-            
-                KingSugarAI enemy = collision.gameObject.GetComponent<KingSugarAI>();
-                if (enemy != null)
-                {
-                    enemy.TakeDamage(1);
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 10f);
-                }
+                ExecuteAOE();
+                lastAOETime = Time.time;
+                return NodeState.Success;
             }
-        }
-    }
-
-
-    // --- Behavior Tree Methods ---
-
-    NodeState CanSeePlayer()
-    {
-        float dist = Vector2.Distance(transform.position, player.position);
-        return (dist <= detectionRange) ? NodeState.Success : NodeState.Failure;
-    }
-
-    NodeState PlayerIsNearOnGround()
-    {
-        float dist = Vector2.Distance(transform.position, player.position);
-        bool isGround = IsPlayerOnGround();
-        return (dist <= aoeRange && isGround) ? NodeState.Success : NodeState.Failure;
-    }
-
-    NodeState PlayerIsFarOnPlatform()
-    {
-        float dist = Vector2.Distance(transform.position, player.position);
-        bool isPlatform = IsPlayerOnPlatform();
-        return (dist > aoeRange && isPlatform) ? NodeState.Success : NodeState.Failure;
-    }
-
-    NodeState AOEStrike()
-    {
-        if (Time.time - lastAOETime < aoeCooldown)
             return NodeState.Failure;
+        });
 
-        Debug.Log("King Sugar AOE Strike!");
-        Movement playerMovement = player.GetComponent<Movement>();
-        if (playerMovement != null)
+        var aoeSequence = new SequenceNode(new List<BTNode> {
+            playerInAOERange,
+            doAOE
+        });
+
+        var playerInChaseRange = new ActionNode(() =>
         {
-            playerMovement.TakeDamage(damageAOE);
-            playerMovement.ApplySlow(2f, 2f);
-        }
+            float distance = Vector2.Distance(transform.position, player.position);
+            return (!playerInAirZone && distance <= chaseRange && distance > aoeRange)
+                ? NodeState.Success
+                : NodeState.Failure;
+        });
 
-        lastAOETime = Time.time;
-        return NodeState.Success;
-    }
+        var chase = new ActionNode(() =>
+        {
+            ChasePlayer();
+            return NodeState.Running;
+        });
 
-    NodeState ShootProjectile()
-    {
-        if (Time.time - lastShootTime < projectileCooldown)
+        var chaseSequence = new SequenceNode(new List<BTNode> {
+            playerInChaseRange,
+            chase
+        });
+
+        var projectileAttack = new ActionNode(() =>
+        {
+            if (playerInAirZone)
+            {
+                rb.linearVelocity = Vector2.zero;
+                if (Time.time - lastProjectileTime >= projectileCooldown)
+                {
+                    ShootProjectile();
+                    lastProjectileTime = Time.time;
+                }
+                return NodeState.Running;
+            }
             return NodeState.Failure;
+        });
 
-        Debug.Log("King Sugar shoots!");
-        Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        var idle = new ActionNode(() =>
+        {
+            rb.linearVelocity = Vector2.zero;
+            return NodeState.Running;
+        });
 
-        lastShootTime = Time.time;
-        return NodeState.Success;
+        treeRoot = new SelectorNode(new List<BTNode> {
+            aoeSequence,
+            chaseSequence,
+            projectileAttack,
+            idle
+        });
     }
 
-    NodeState MoveTowardPlayer()
+    public void ExecuteAOE()
     {
-        Vector2 target = new Vector2(player.position.x, transform.position.y);
-        transform.position = Vector2.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
-        sr.flipX = player.position.x < transform.position.x;
-        return NodeState.Running;
+        Debug.Log("AOE Attack!");
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(aoeCenter.position, aoeRadius, playerLayer);
+        foreach (var hit in hits)
+        {
+            Debug.Log("Player terkena AOE");
+            // ⚠️ Ganti sesuai skrip HP player kamu
+            // hit.GetComponent<PlayerHealth>()?.TakeDamage(aoeDamage);
+        }
     }
 
-    // --- Utility Checks ---
-
-    bool IsPlayerOnGround()
+    public void ShootProjectile()
     {
-        RaycastHit2D hit = Physics2D.Raycast(player.position, Vector2.down, 0.2f, LayerMask.GetMask("Ground"));
-        return hit.collider != null;
+        Debug.Log("Shoot Projectile!");
+
+        Vector2 direction = (player.position - firePoint.position).normalized;
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        Rigidbody2D rbProj = proj.GetComponent<Rigidbody2D>();
+        if (rbProj != null)
+            rbProj.linearVelocity = direction * 5f;
     }
 
-    bool IsPlayerOnPlatform()
+    public void ChasePlayer()
     {
-        RaycastHit2D hit = Physics2D.Raycast(player.position, Vector2.down, 0.2f, LayerMask.GetMask("Platform"));
-        return hit.collider != null;
+        float dir = Mathf.Sign(player.position.x - transform.position.x);
+        rb.linearVelocity = new Vector2(dir * moveSpeed, rb.linearVelocity.y);
+        FlipToPlayer(dir);
     }
 
-    // --- Damage & Death ---
+    void FlipToPlayer(float dir)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = dir < 0 ? -1 : 1;
+        transform.localScale = scale;
+    }
+
+    public bool IsAOEOnCooldown()
+    {
+        return Time.time - lastAOETime < aoeCooldown;
+    }
 
     public void TakeDamage(int amount)
     {
-        if (isDead) return;
+        if (currentHP <= 0) return;
 
         currentHP -= amount;
+        Debug.Log("King Sugar HP: " + currentHP);
+
         if (currentHP <= 0)
-        {
             Die();
-        }
     }
 
     void Die()
     {
-        isDead = true;
         Debug.Log("King Sugar defeated!");
-        rb.linearVelocity = Vector2.zero;
         GetComponent<Collider2D>().enabled = false;
-        rb.simulated = false;
-        Destroy(gameObject, 1f);
+        this.enabled = false;
+        Destroy(gameObject, 2f);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        if (aoeCenter != null)
+            Gizmos.DrawWireSphere(aoeCenter.position, aoeRadius);
     }
 }
