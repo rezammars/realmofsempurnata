@@ -9,7 +9,6 @@ public class TriggerZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             kingSugarAI.playerInAirZone = true;
-            Debug.Log("Player MASUK zona udara");
         }
     }
 
@@ -18,7 +17,6 @@ public class TriggerZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             kingSugarAI.playerInAirZone = false;
-            Debug.Log("Player KELUAR dari zona udara");
         }
     }
 }

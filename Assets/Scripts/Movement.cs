@@ -34,6 +34,7 @@ public class Movement : MonoBehaviour
 
     private int currentHP;
     private bool isInvincible = false;
+    public bool canPush = false;
 
     private Coroutine lightBoostCoroutine;
     private Coroutine slowCoroutine;
@@ -225,5 +226,37 @@ public class Movement : MonoBehaviour
         yield return new WaitForSeconds(duration);
         isInvincible = false;
         Debug.Log("Player tidak kebal lagi.");
+    }
+
+    // === Push Power Up ===
+    public void ActivatePushAbility(float duration)
+    {
+        canPush = true;
+    
+        GameObject[] pushables = GameObject.FindGameObjectsWithTag("Pushable");
+        foreach (var obj in pushables)
+        {
+            if (obj.TryGetComponent<Pusher>(out var pusher))
+            {
+                pusher.EnablePush();
+            }
+        }
+
+        StartCoroutine(DisablePushAfter(duration));
+    }
+
+    IEnumerator DisablePushAfter(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        canPush = false;
+
+        GameObject[] pushables = GameObject.FindGameObjectsWithTag("Pushable");
+        foreach (var obj in pushables)
+        {
+            if (obj.TryGetComponent<Pusher>(out var pusher))
+            {
+                pusher.DisablePush();
+            }
+        }
     }
 }

@@ -128,8 +128,6 @@ public class KingSugarAI : MonoBehaviour
         foreach (var hit in hits)
         {
             Debug.Log("Player terkena AOE");
-            // ⚠️ Ganti sesuai skrip HP player kamu
-            // hit.GetComponent<PlayerHealth>()?.TakeDamage(aoeDamage);
         }
     }
 
@@ -154,7 +152,9 @@ public class KingSugarAI : MonoBehaviour
     void FlipToPlayer(float dir)
     {
         Vector3 scale = transform.localScale;
-        scale.x = dir < 0 ? -1 : 1;
+        float originalScaleX = Mathf.Abs(scale.x);
+
+        scale.x = dir < 0 ? -originalScaleX : originalScaleX;
         transform.localScale = scale;
     }
 

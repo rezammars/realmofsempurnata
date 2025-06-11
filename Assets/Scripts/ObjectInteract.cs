@@ -25,6 +25,9 @@ public class ObjectInteract : MonoBehaviour
                     case "bayam":
                         movement.ActivateInvincibility(5f);
                         break;
+                    case "susu":
+                        movement.ActivatePushAbility(5f);
+                        break;
                 }
             }
         }
