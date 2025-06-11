@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
+    [Header("Waypoint Settings")]
     [SerializeField] private Transform[] waypoints;
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float waitTime = 1f;
@@ -9,6 +10,11 @@ public class MovingPlatform : MonoBehaviour
     private int currentWaypointIndex = 0;
     private float waitCounter = 0f;
     private bool isWaiting = false;
+
+    private void Awake()
+    {
+        SetupPlatformEffector();
+    }
 
     private void Update()
     {
@@ -47,25 +53,16 @@ public class MovingPlatform : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void SetupPlatformEffector()
     {
-        if (waypoints == null || waypoints.Length <= 1)
-            return;
+        BoxCollider2D box = GetComponent<BoxCollider2D>();
+        box.usedByEffector = true;
+        box.isTrigger = false;
 
-        for (int i = 0; i < waypoints.Length; i++)
-        {
-            if (waypoints[i] == null)
-                continue;
-
-            Gizmos.DrawSphere(waypoints[i].position, 0.1f);
-            if (i < waypoints.Length - 1 && waypoints[i + 1] != null)
-            {
-                Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
-            }
-            else if (waypoints[0] != null)
-            {
-                Gizmos.DrawLine(waypoints[i].position, waypoints[0].position);
-            }
-        }
+        PlatformEffector2D effector = GetComponent<PlatformEffector2D>();
+        effector.useOneWay = true;
+        effector.useOneWayGrouping = true;
+        effector.surfaceArc = 180f;
+        effector.rotationalOffset = 0f;
     }
 }

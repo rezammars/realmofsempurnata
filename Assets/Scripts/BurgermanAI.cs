@@ -15,11 +15,6 @@ public class BurgermanAI : MonoBehaviour
     public float patrolDistance = 3f;
     public float jumpForce = 5f;
 
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.1f;
-    public LayerMask groundLayer;
-
     [Header("Health")]
     public int maxHP = 1;
 
@@ -28,7 +23,6 @@ public class BurgermanAI : MonoBehaviour
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
-    private bool isGrounded;
     private bool hasJumped = false;
     private Vector2 patrolStartPoint;
     private bool movingRight = true;
@@ -66,7 +60,6 @@ public class BurgermanAI : MonoBehaviour
     {
         if (isDead) return;
 
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         root.Evaluate();
     }
 
@@ -104,7 +97,7 @@ public class BurgermanAI : MonoBehaviour
         if (playerMovement != null)
         {
             playerMovement.TakeDamage(damageToPlayer);
-            playerMovement.ApplySlow(2f, 3f); // Debuff slow
+            playerMovement.ApplySlow(2f, 3f);
         }
 
         lastAttackTime = Time.time;
@@ -127,13 +120,11 @@ public class BurgermanAI : MonoBehaviour
 
     NodeState CheckObstacle()
     {
-        if (!isGrounded) return NodeState.Failure;
-
         Vector2 direction = player.position.x > transform.position.x ? Vector2.right : Vector2.left;
         Vector2 origin = new Vector2(transform.position.x, transform.position.y + 0.5f);
         Vector2 size = new Vector2(0.5f, 1f);
 
-        RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, direction, 0.6f, groundLayer);
+        RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, direction, 0.6f, LayerMask.GetMask("Ground"));
         Debug.DrawRay(origin, direction * 0.6f, Color.red);
 
         if (hit.collider != null && !hasJumped && hit.collider.CompareTag("Platform"))
@@ -143,7 +134,7 @@ public class BurgermanAI : MonoBehaviour
             return NodeState.Success;
         }
 
-        if (isGrounded && Mathf.Abs(rb.linearVelocity.y) < 0.01f)
+        if (Mathf.Abs(rb.linearVelocity.y) < 0.01f)
         {
             hasJumped = false;
         }

@@ -13,6 +13,6 @@ public class ActionNode : BTNode
     public override NodeState Evaluate()
     {
         state = action.Invoke();
-        return action();
+        return state;
     }
 }

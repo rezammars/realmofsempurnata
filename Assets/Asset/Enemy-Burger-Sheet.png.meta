@@ -128,20 +128,20 @@ TextureImporter:
       name: Enemy-Burger-Sheet_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 6
-        width: 57
-        height: 52
+        x: 3
+        y: 7
+        width: 55
+        height: 50
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f5b976ac65366c1d0800000000000000
-      internalID: -3330865649979778209
+      spriteID: 4c7c542d406d6284abf3ddd96b059d4c
+      internalID: -547423820
       vertices: []
       indices: 
       edges: []
@@ -150,20 +150,20 @@ TextureImporter:
       name: Enemy-Burger-Sheet_1
       rect:
         serializedVersion: 2
-        x: 66
-        y: 6
-        width: 57
-        height: 53
+        x: 67
+        y: 7
+        width: 55
+        height: 51
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 81b2ee050819e3bd0800000000000000
-      internalID: -2648519550547645672
+      spriteID: 428cdc24ba92dc248a0db7c5d70e3557
+      internalID: 2017302370
       vertices: []
       indices: 
       edges: []
@@ -172,20 +172,20 @@ TextureImporter:
       name: Enemy-Burger-Sheet_2
       rect:
         serializedVersion: 2
-        x: 129
-        y: 6
-        width: 61
-        height: 55
+        x: 130
+        y: 7
+        width: 59
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4218f390e9bcb3e60800000000000000
-      internalID: 7943166247418429732
+      spriteID: 92373743ff0b0884db160221bbb5dfa6
+      internalID: -1153995928
       vertices: []
       indices: 
       edges: []
@@ -194,20 +194,20 @@ TextureImporter:
       name: Enemy-Burger-Sheet_3
       rect:
         serializedVersion: 2
-        x: 194
-        y: 6
-        width: 57
-        height: 53
+        x: 195
+        y: 7
+        width: 55
+        height: 51
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 30b083e4c94e8f010800000000000000
-      internalID: 1222978658809416451
+      spriteID: f408da2f0a0992a42bbb2231154cd839
+      internalID: 531236512
       vertices: []
       indices: 
       edges: []
@@ -216,20 +216,20 @@ TextureImporter:
       name: Enemy-Burger-Sheet_4
       rect:
         serializedVersion: 2
-        x: 258
-        y: 6
-        width: 57
-        height: 52
+        x: 259
+        y: 7
+        width: 55
+        height: 50
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 326039d0412f6f500800000000000000
-      internalID: 429796982401467939
+      spriteID: 76f64345518887f4a86db2516b0bb830
+      internalID: 2126308122
       vertices: []
       indices: 
       edges: []
@@ -238,7 +238,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a1ecb073afb9f7e44b514135199a6d9b
     internalID: 0
     vertices: []
     indices: 
@@ -247,7 +247,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Enemy-Burger-Sheet_0: -547423820
+      Enemy-Burger-Sheet_1: 2017302370
+      Enemy-Burger-Sheet_2: -1153995928
+      Enemy-Burger-Sheet_3: 531236512
+      Enemy-Burger-Sheet_4: 2126308122
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

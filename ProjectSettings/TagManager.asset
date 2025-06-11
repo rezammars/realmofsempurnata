@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 3
   tags:
   - Interactable
-  - Platform
   - Enemy
   layers:
   - Default
@@ -16,7 +15,7 @@ TagManager:
   - UI
   - Ground
   - Enemy
-  - 
+  - Platform
   - 
   - 
   - 

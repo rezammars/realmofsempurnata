@@ -11,10 +11,9 @@ public class Movement : MonoBehaviour
     private float originalMoveSpeed;
     private float originalJumpForce;
 
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.15f;
-    public LayerMask groundLayer;
+    [Header("Jump Control")]
+    public float jumpCooldown = 0.2f;
+    private float lastJumpTime = -10f;
 
     [Header("Attack")]
     public float attackRange = 1f;
@@ -31,7 +30,6 @@ public class Movement : MonoBehaviour
     private float originalLightRadius;
 
     private Rigidbody2D rb;
-    private bool isGrounded;
     private Camera maincamera;
 
     private int currentHP;
@@ -60,14 +58,13 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && Time.time >= lastJumpTime + jumpCooldown)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            lastJumpTime = Time.time;
         }
 
         if (transform.position.y < fallThresholdY)
@@ -85,11 +82,24 @@ public class Movement : MonoBehaviour
         {
             if (transform.position.y > other.transform.position.y + 0.3f)
             {
+                bool damaged = false;
+
                 if (other.TryGetComponent<BurgermanAI>(out var burger))
                 {
                     burger.TakeDamage(1);
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f);
+                    damaged = true;
                 }
+                else if (other.TryGetComponent<ColaCannonAI>(out var cola))
+                {
+                    cola.TakeDamage(1);
+                    damaged = true;
+                }
+                else if (other.TryGetComponent<KingSugarAI>(out var kingSugar))
+                {
+                    kingSugar.TakeDamage(1);
+                    damaged = true;
+                }
+                if (damaged)
                 {
                     rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.5f);
                 }

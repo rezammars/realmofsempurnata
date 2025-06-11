@@ -107,14 +107,4 @@ public class ColaCannonAI : MonoBehaviour
         Destroy(gameObject, 0.5f);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (isDead) return;
-
-        // Deteksi berdasarkan nama GameObject atau struktur hirarki
-        if (collision.gameObject.name.ToLower().Contains("foot"))
-        {
-            TakeDamage(1);
-        }
-    }
 }

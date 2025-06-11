@@ -2,10 +2,8 @@ using UnityEngine;
 
 public class KingSugarProjectile : MonoBehaviour
 {
-    public int damage = 1;
-    public float lifetime = 3f;
-    public float slowDuration = 3f;
-    public float slowAmount = 2f;
+     public int damage = 1;
+    public float lifetime = 5f;
 
     void Start()
     {
@@ -16,17 +14,12 @@ public class KingSugarProjectile : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Movement player = other.GetComponent<Movement>();
-            if (player != null)
+            Movement movement = other.GetComponent<Movement>();
+            if (movement != null)
             {
-                player.TakeDamage(damage);
-                player.ApplySlow(slowAmount, slowDuration);
+                movement.TakeDamage(damage);
+                movement.ApplySlow(2f, 3f);
             }
-
-            Destroy(gameObject);
-        }
-        else if (!other.CompareTag("Enemy"))
-        {
             Destroy(gameObject);
         }
     }
